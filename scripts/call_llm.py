@@ -14,31 +14,6 @@ client=OpenAI(
     api_key=API_KEY
 )
 
-def get_completion(user_prompt, system_prompt):
-    """_summary_
-
-    Args:
-        user_prompt (str): user quary
-        system_prompt (str): LLM Role
-
-    Returns:
-        str: LLM Response
-    """
-    response = client.chat.completions.create(
-        model=MODEL_NAME,
-        messages=[
-            {
-                'role':"user",
-                'content': user_prompt
-            },
-            {
-                'role':"system",
-                'content':system_prompt
-            }
-        ]
-    )
-    return response.choices[0].message.content
-
 
 def assemble_text_from_fields(field_atoms):
     """

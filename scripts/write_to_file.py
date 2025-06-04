@@ -21,7 +21,7 @@ def assemble_text_from_fields(field_atoms):
     return "\n".join(textual_fields) # for readability, put each field on its own line
 
 
-def write_to_file_internal(field_expression, summary_atom, file_path_atom):
+def write_to_file(field_expression, summary_atom, file_path_atom):
     """
     Writes the original fields + LLM summary to a human‐readable file.
     Arguments:
