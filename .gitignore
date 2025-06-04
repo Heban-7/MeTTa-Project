@@ -1,2 +1,4 @@
 MeTTavenv/
 .env
+__pycache__/
+*.pyc
