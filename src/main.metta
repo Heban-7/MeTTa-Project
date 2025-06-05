@@ -59,5 +59,6 @@
 )
 
 ; Execute the summarization
+!(print "Starting gene summarization...")
 !(summarize-gene)
-
+!(print "Gene summarization complete!")

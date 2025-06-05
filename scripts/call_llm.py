@@ -32,9 +32,20 @@ def assemble_text_from_fields(field_atoms):
     Returns:
         str: Concatenated text from all field atoms
     """
-    textual_fields = [str(atom) for atom in field_atoms]
-    
-    return "\n".join(textual_fields) # for readability, put each field on its own line
+    try:
+        # Convert each atom to string and format it nicely
+        field_names = ["Gene ID", "Gene Name", "Type", "Chromosome", "Start", "End", "Synonyms"]
+        formatted_fields = []
+        
+        for i, atom in enumerate(field_atoms):
+            field_name = field_names[i] if i < len(field_names) else f"Field {i}"
+            field_value = str(atom)
+            formatted_fields.append(f"{field_name}: {field_value}")
+        
+        return "\n".join(formatted_fields)
+    except Exception as e:
+        print(f"Error in assemble_text_from_fields: {str(e)}", file=sys.stderr)
+        return str(field_atoms)  # Fallback to simple string representation
 
 def call_llm(field_expression):
     """
@@ -65,8 +76,9 @@ def call_llm(field_expression):
                         "role": "system",
                         "content": (
                             "You are a helpful assistant specialized in summarizing gene information. "
-                            "Given the following lines (each line is one field about a gene), "
-                            "produce a concise summary (2–3 sentences) highlighting the gene ID, gene name, type, location, and any notable synonyms."
+                            "Given the following gene information, produce a concise short summary"
+                            "highlighting the gene ID, gene name, type, location, and any notable synonyms. "
+                            "Format the summary in a clear, scientific manner."
                         )
                     },
                     {
@@ -77,7 +89,7 @@ def call_llm(field_expression):
                 temperature=0.0,
                 max_tokens=150
             )
-            summary_text = response.choices[0].message.content
+            summary_text = response.choices[0].message.content.strip()
             
             if not summary_text:
                 raise ValueError("Received empty summary from LLM")
