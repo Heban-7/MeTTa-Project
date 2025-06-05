@@ -26,8 +26,9 @@ cd MeTTa-Project
 
 2. Create and activate a virtual environment:
 ```bash
-python -m venv MeTTavenv
-source MeTTavenv/bin/activate  # On Windows: MeTTavenv\Scripts\activate
+python3 -m venv MeTTavenv 
+source MeTTavenv/bin/activate  # On Ubuntu
+MeTTavenv\Scripts\activate # On Windows: 
 ```
 
 3. Install dependencies:
@@ -61,7 +62,6 @@ MeTTa-Project/
 ## Usage
 
 1. Ensure your gene data is properly formatted in `data/nodes.metta`
-2. Run the summarization script:
 ```bash
 metta src/main.metta
 ```
