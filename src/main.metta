@@ -39,8 +39,6 @@
     )
 )
 
-
-
 ; The main "top-level" rule: for every gene, summarize and write to file
 (= (summarize-gene)
    (begin

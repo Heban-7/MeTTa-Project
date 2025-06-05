@@ -22,7 +22,6 @@ client=OpenAI(
     api_key=API_KEY
 )
 
-
 def assemble_text_from_fields(field_atoms):
     """
     Assembles text from a list of field atoms.
@@ -46,11 +45,9 @@ def call_llm(field_expression):
         A hyperon Symbol (String) containing the summary text.
     """
     try:
-        # Validate API configuration
-        if not API_KEY:
-            raise ValueError("API_KEY environment variable is not set")
-        if not MODEL_NAME:
-            raise ValueError("MODEL_NAME environment variable is not set")
+        # Check if API is configured
+        if not client:
+            return "Error: API_KEY environment variable is not set. Please set it in .env file"
 
         # Extract the python list of atoms from the Metta Expression
         if not isinstance(field_expression, list):
@@ -61,7 +58,7 @@ def call_llm(field_expression):
         
         # Call the OpenAI API to get a summary
         try:
-            response = client.ChatCompletion.create(
+            response = client.chat.completions.create(
                 model=MODEL_NAME,
                 messages=[
                     {
@@ -80,7 +77,7 @@ def call_llm(field_expression):
                 temperature=0.0,
                 max_tokens=150
             )
-            summary_text = response.choices[0].message.content.strip()
+            summary_text = response.choices[0].message.content
             
             if not summary_text:
                 raise ValueError("Received empty summary from LLM")

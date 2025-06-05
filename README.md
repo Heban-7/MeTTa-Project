@@ -50,9 +50,10 @@ MeTTa-Project/
 ├── scripts/           # Python implementation
 │   ├── call_llm.py    # LLM integration
 │   └── write_to_file.py # Output handling
-├── output/            # Generated summaries
+├── src/            # Generated summaries
 │   ├── llm_operations.py    # LLM integratio
 │   └── main.metta  # MeTTa integration for all 
+├── output/ 
 ├── requirements.txt   # Project dependencies
 └── README.md         # This file
 ```

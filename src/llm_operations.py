@@ -21,7 +21,7 @@ from scripts.write_to_file import write_to_file
 
 
 @register_atoms(pass_metta=True)
-def llm_ops(metta):
+def llm_operations(metta):
     """
     This function is invoked by MeTTa at startup.  It should return a dict of
     { "registered_atom_name": OperationAtom(...) } mappings.  MeTTa uses this

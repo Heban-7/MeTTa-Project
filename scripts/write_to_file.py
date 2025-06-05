@@ -64,8 +64,13 @@ def write_to_file(field_expression, summary_atom, file_path_atom, format='text')
         block.append("")  # blank line
         
         # Append to file
-        with open(out_path, "a", encoding="utf-8") as f:
-            f.write("\n".join(block) + "\n")
+        try:
+            with open(out_path, "a", encoding="utf-8") as f:
+                f.write("\n".join(block) + "\n")
+            print(f"Successfully wrote summary for gene {gene_id} to {out_path}")
+        except IOError as e:
+            print(f"Error writing to file {out_path}: {str(e)}", file=sys.stderr)
+            raise
             
     except Exception as e:
         print(f"Error in write_to_file: {str(e)}", file=sys.stderr)
