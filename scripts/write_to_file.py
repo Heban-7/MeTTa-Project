@@ -1,6 +1,8 @@
 # scripts/write_to_file : writes original gene fields + summary to a text file
 
 import os, sys
+import csv
+from datetime import datetime
 
 # get working directory
 sys.path.append(os.path.abspath('..'))
@@ -21,49 +23,52 @@ def assemble_text_from_fields(field_atoms):
     return "\n".join(textual_fields) # for readability, put each field on its own line
 
 
-def write_to_file(field_expression, summary_atom, file_path_atom):
+def write_to_file(field_expression, summary_atom, file_path_atom, format='text'):
     """
-    Writes the original fields + LLM summary to a human‐readable file.
+    Writes the original fields + LLM summary to a file in specified format.
     Arguments:
       - field_expression: a Python list of Atoms (same as above).
       - summary_atom: a Python string (the summary from call_llm).
       - file_path_atom: a Python string (path where to write).
+      - format_type: str, either "text" or "csv" (default: "text")
       
     Behavior:
-      - Appends a block to the given file with:
           ==== Gene: <GID> ===
           <Original fields...>
           --- Summary from LLM ---
           <Summary text>
-      - Leaves a blank line between genes.
     """
+    try:
+        # Sanity-check types
+        if not isinstance(field_expression, list):
+            raise TypeError("write_to_file: expected a list of atoms as first arg, got %r" % (field_expression,))
+        if not isinstance(summary_atom, str):
+            raise TypeError("write_to_file: expected summary (str) as second arg, got %r" % (summary_atom,))
+        if not isinstance(file_path_atom, str):
+            raise TypeError("write_to_file: expected file path (str) as third arg, got %r" % (file_path_atom,))
+        
+        # Convert fields → lines
+        lines = [str(atom) for atom in field_expression]
+        gene_id = lines[0] if len(lines) > 0 else "UnknownGene"
+        
+        # Ensure output directory exists
+        out_path = os.path.abspath(file_path_atom)
+        os.makedirs(os.path.dirname(out_path), exist_ok=True)
 
-    # Sanity‐check types
-    if not isinstance(field_expression, list):
-        raise TypeError("write_to_file: expected a list of atoms as first arg, got %r" % (field_expression,))
-    if not isinstance(summary_atom, str):
-        raise TypeError("write_to_file: expected summary (str) as second arg, got %r" % (summary_atom,))
-    if not isinstance(file_path_atom, str):
-        raise TypeError("write_to_file: expected file path (str) as third arg, got %r" % (file_path_atom,))
-    
-    # Convert fields → lines
-    lines = [str(atom) for atom in field_expression]
-    gene_id = lines[0] if len(lines) > 0 else "UnknownGene"
-    
-    # Build file content
-    block = []
-    block.append(f"=== Gene: {gene_id} ====")
-    block.extend(lines)
-    block.append("--- Summary from LLM ---")
-    block.append(summary_atom)
-    block.append("")  # blank line
-    
-    # Ensure output directory exists
-    out_path = os.path.abspath(file_path_atom)
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
-
-    # Append to file
-    with open(out_path, "a", encoding="utf-8") as f:
-        f.write("\n".join(block) + "\n")
+        # Build text format content
+        block = []
+        block.append(f"=== Gene: {gene_id} ====")
+        block.extend(lines)
+        block.append("--- Summary from LLM ---")
+        block.append(summary_atom)
+        block.append("")  # blank line
+        
+        # Append to file
+        with open(out_path, "a", encoding="utf-8") as f:
+            f.write("\n".join(block) + "\n")
+            
+    except Exception as e:
+        print(f"Error in write_to_file: {str(e)}", file=sys.stderr)
+        raise
         
 

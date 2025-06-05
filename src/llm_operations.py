@@ -7,7 +7,15 @@ import os, sys
 from hyperon.ext import register_atoms
 from hyperon.atoms import OperationAtom, S
 
-sys.path.append(os.path.abspath('..'))
+# Add the project root directory and scripts directory to Python path
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+scripts_dir = os.path.join(project_root, 'scripts')
+sys.path.insert(0, project_root)
+sys.path.insert(0, scripts_dir)
+
+# Debug: Print Python path
+print("Python path:", sys.path)
+
 from scripts.call_llm import call_llm
 from scripts.write_to_file import write_to_file
 
@@ -17,7 +25,7 @@ def llm_ops(metta):
     """
     This function is invoked by MeTTa at startup.  It should return a dict of
     { "registered_atom_name": OperationAtom(...) } mappings.  MeTTa uses this
-    to know “call_llm” and “write_to_file” as valid operations.
+    to know "call_llm" and "write_to_file" as valid operations.
     """
 
     call_llm_atom = OperationAtom(
@@ -30,15 +38,14 @@ def llm_ops(metta):
 
     write_to_file_atom = OperationAtom(
         "write_to_file",
-        lambda afield_list, asummary, afilepath: write_to_file(afield_list, asummary, afilepath),
-        # Type signature: [Expression, String, String]
-        ["Expression", "String", "String"],
+        lambda afield_list, asummary, afilepath, aformat: write_to_file(afield_list, asummary, afilepath, aformat),
+        # Type signature: [Expression, String, String, String]
+        ["Expression", "String", "String", "String"],
         unwrap=True
     )
-    
+
     return {
         "call_llm": call_llm_atom,
         "write_to_file": write_to_file_atom
     }
-    
 
